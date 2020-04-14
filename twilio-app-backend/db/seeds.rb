@@ -5,3 +5,9 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+user = User.create(name: 'name', username: 'username', password_digest: 'password', avatar: 'avatar', bio: 'bio')
+post = Post.create(title: 'title', date_time: 'date', content: 'content...', img: 'img', user_id: user.id, likes: 2)
+comment = Comment.create(content: 'comment...', post_id: post.id, user_id: user.id)
+
+puts "Seeded"
