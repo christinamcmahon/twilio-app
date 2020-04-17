@@ -20,22 +20,24 @@ class CommentsController < ApplicationController
     if @comment.save
       render json: @comment, status: :created, location: @comment
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      render json: @comment.errors, status: :not_acceptable
     end
   end
 
   # PATCH/PUT /comments/1
   def update
     if @comment.update(comment_params)
-      render json: @comment
+      render json: { message: "comment successfully updated.", success: true, data: @comment }, status: 200
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      puts "Errors= #{@comment.errors.full_messages.join(", ")}"
+      render json: { message: "comment NOT updated because #{@comment.errors.full_messages.join(", ")}", success: false, data: @comment.errors.full_messages }, status: 406
     end
   end
 
   # DELETE /comments/1
   def destroy
     @comment.destroy
+    render json: { message: "comment successfully deleted.", success: true, data: @comment }
   end
 
   private

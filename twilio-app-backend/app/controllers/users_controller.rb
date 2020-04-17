@@ -17,25 +17,28 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
-      render json: @user, status: :created, location: @user
+    if @user.valid? && @user.save
+      @token = encode_token({ user_id: @user.id })
+      render json: { user: @user, jwt: @token }, status: :created
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { error: "failed to create user" }, status: :not_acceptable
     end
   end
 
   # PATCH/PUT /users/1
   def update
     if @user.update(user_params)
-      render json: @user
+      render json: { message: "user successfully updated.", success: true, data: @user }, status: 200
     else
-      render json: @user.errors, status: :unprocessable_entity
+      puts "Errors= #{@user.errors.full_messages.join(", ")}"
+      render json: { message: "user NOT updated because #{@user.errors.full_messages.join(", ")}", success: false, data: @user.errors.full_messages }, status: 406
     end
   end
 
   # DELETE /users/1
   def destroy
     @user.destroy
+    render json: { message: "user successfully deleted.", success: true, data: @user }
   end
 
   private

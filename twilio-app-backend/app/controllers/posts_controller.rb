@@ -20,22 +20,24 @@ class PostsController < ApplicationController
     if @post.save
       render json: @post, status: :created, location: @post
     else
-      render json: @post.errors, status: :unprocessable_entity
+      render json: @post.errors, status: :not_acceptable
     end
   end
 
   # PATCH/PUT /posts/1
   def update
     if @post.update(post_params)
-      render json: @post
+      render json: { message: "post successfully updated.", success: true, data: @post }, status: 200
     else
-      render json: @post.errors, status: :unprocessable_entity
+      puts "Errors= #{@post.errors.full_messages.join(", ")}"
+      render json: { message: "post NOT updated because #{@post.errors.full_messages.join(", ")}", success: false, data: @post.errors.full_messages }, status: 406
     end
   end
 
   # DELETE /posts/1
   def destroy
     @post.destroy
+    render json: { message: "post successfully deleted.", success: true, data: @post }
   end
 
   private
@@ -46,6 +48,6 @@ class PostsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def post_params
-      params.require(:post).permit(:title, :date_time, :content, :img, :user_id, :type, :likes)
+      params.require(:post).permit(:title, :date_time, :content, :img, :user_id, :likes)
     end
 end
